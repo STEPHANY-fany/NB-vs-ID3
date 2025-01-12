@@ -1,0 +1,124 @@
+import pandas as pd
+
+ini_juic_val = 2
+causa_val = 28
+hijos_val = 1
+postr_div1_val = 1
+postr_div2_val = 1
+mayor_val = "FALSO"
+
+
+archivo = "C:/Users/adof1/Desktop/Ux/Tercer semestre/Estructura de datos/ID3/2018 code.csv"
+data = pd.read_csv(archivo)
+
+matriz = data.values
+largo = len(matriz)
+H=1
+M=1
+A=1
+for i in data["favor"]:
+    if i == "Hombre":
+        H += 1
+    elif i == "Mujer":
+        M += 1
+    elif i == "Ambos":
+        A += 1
+
+conteos = {}
+
+for columna in data.columns:
+    conteos_columna = {}
+    
+    valores_unicos = data[columna].unique()
+    
+    for valor in valores_unicos:
+
+        if valor == "Hombre":
+            subset = data[data[columna] == valor]
+            conteo_h = subset["favor"].value_counts().get("Hombre", 0)
+            conteos_columna[valor] = {
+            "Total": conteo_h/largo
+            }
+            continue
+        if valor == "Mujer":
+            subset = data[data[columna] == valor]
+            conteo_m = subset["favor"].value_counts().get("Mujer", 0)
+            conteos_columna[valor] = {
+            "Total": conteo_m/largo
+            }
+            continue
+
+        if valor == "Ambos":
+            subset = data[data[columna] == valor]
+            conteo_a = subset["favor"].value_counts().get("Ambos", 0)
+            conteos_columna[valor] = {
+            "Total": conteo_a/largo
+            }
+            continue
+
+
+        subset = data[data[columna] == valor]
+        
+        conteo_h = subset["favor"].value_counts().get("Hombre", 0)
+        conteo_m = subset['favor'].value_counts().get("Mujer", 0)
+        conteo_a = subset['favor'].value_counts().get("Ambos", 0)
+        
+
+        conteos_columna[valor] = {
+            "Hombre": (conteo_h+1)/H,
+            "Mujer": (conteo_m+1)/M,
+            "Ambos": (conteo_a+1)/A,
+            "Total": (conteo_h + conteo_m + conteo_a + 3)/largo
+        }
+    
+    conteos[columna] = conteos_columna
+
+print(conteos)
+
+Ini_juic_h = conteos['ini_juic'][ini_juic_val]["Hombre"]
+Causa_h = conteos['causa'][causa_val]["Hombre"]
+Hijos_h = conteos['hijos'][hijos_val]["Hombre"]
+Postr_div1_h = conteos['postr_div1'][postr_div1_val]["Hombre"]
+Postr_div2_h = conteos['postr_div2'][postr_div2_val]["Hombre"]
+Mayor_h = conteos['Mayor'][mayor_val]["Hombre"]
+
+Ini_juic_m = conteos['ini_juic'][ini_juic_val]["Mujer"]
+Causa_m = conteos['causa'][causa_val]["Mujer"]
+Hijos_m = conteos['hijos'][hijos_val]["Mujer"]
+Postr_div1_m = conteos['postr_div1'][postr_div1_val]["Mujer"]
+Postr_div2_m = conteos['postr_div2'][postr_div2_val]["Mujer"]
+Mayor_m = conteos['Mayor'][mayor_val]["Mujer"]
+
+Ini_juic_a = conteos['ini_juic'][ini_juic_val]["Ambos"]
+Causa_a = conteos['causa'][causa_val]["Ambos"]
+Hijos_a = conteos['hijos'][hijos_val]["Ambos"]
+Postr_div1_a = conteos['postr_div1'][postr_div1_val]["Ambos"]
+Postr_div2_a = conteos['postr_div2'][postr_div2_val]["Ambos"]
+Mayor_a = conteos['Mayor'][mayor_val]["Ambos"]
+
+Ini_juic_t = conteos['ini_juic'][ini_juic_val]["Total"]
+Causa_t = conteos['causa'][causa_val]["Total"]
+Hijos_t = conteos['hijos'][hijos_val]["Total"]
+Postr_div1_t = conteos['postr_div1'][postr_div1_val]["Total"]
+Postr_div2_t = conteos['postr_div2'][postr_div2_val]["Total"]
+Mayor_t = conteos['Mayor'][mayor_val]["Total"]
+
+Fav_h = conteos['favor']["Hombre"]["Total"]
+Fav_m = conteos['favor']["Mujer"]["Total"]
+Fav_a = conteos['favor']["Ambos"]["Total"]
+
+
+Ph = (Ini_juic_h * Causa_h * Hijos_h * Postr_div1_h * Postr_div2_h * Mayor_h * Fav_h)/(Ini_juic_t * Causa_t * Hijos_t * Postr_div1_t * Postr_div2_t * Mayor_t)
+Pm = (Ini_juic_m * Causa_m * Hijos_m * Postr_div1_m * Postr_div2_m * Mayor_m * Fav_m)/(Ini_juic_t * Causa_t * Hijos_t * Postr_div1_t * Postr_div2_t * Mayor_t)
+Pa = (Ini_juic_a * Causa_a * Hijos_a * Postr_div1_a * Postr_div2_a * Mayor_a * Fav_a)/(Ini_juic_t * Causa_t * Hijos_t * Postr_div1_t * Postr_div2_t * Mayor_t)
+
+print("Probabilidad Hombre: ",Ph)
+print("Probabilidad Mujer: ",Pm)
+print("Probabilidad Ambos: ",Pa)
+
+if max(Ph, Pm, Pa) == Ph:
+    print("Favor: Hombre")
+elif max(Ph, Pm, Pa) == Pm:
+    print("Favor: Mujer")
+else:
+    print("Favor: Ambos")
